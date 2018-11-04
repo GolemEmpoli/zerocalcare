@@ -1,0 +1,7 @@
+SetEnv LANG en_US.UTF-8
+Options +ExecCGI
+AddHandler cgi-script .py
+<Files "config.py">
+Order Allow,Deny
+Deny from all
+</Files>

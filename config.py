@@ -1,0 +1,8 @@
+UNIX_SOCKET=''
+HOST=''
+USER=''
+PASSWORD=''
+DB=''
+CALENDAR_NAME=''
+
+
