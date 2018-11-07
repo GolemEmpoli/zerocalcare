@@ -5,6 +5,7 @@ import sys
 import cgitb, cgi
 import datetime as dt
 import locale
+import json
 
 from getInfo import *
 
@@ -14,38 +15,51 @@ locale.setlocale(locale.LC_TIME, 'it_IT')
 cgitb.enable()
 inputvars = cgi.FieldStorage()
 
-print('Content-Type: text/html; charset=utf-8')
-print()
+# Default format is json, keep HTML for light debug
+if 'format' in inputvars and inputvars['format'].value == 'html':
+    format = 'html'
+    print('Content-Type: text/html; charset=utf-8')
+else:
+    format = 'json'
+    print('Content-Type: text/json; charset=utf-8')
 
+print()
 ### End of HTTP headers:  it is now safe to output things
 ##########################################################
-
-
-tree = ET.ElementTree()
-main = ET.Element('main')
-
-tree._setroot(main)
 
 # get BaseDate and interval
 interval = 'week' if 'interval' not in inputvars else inputvars['interval'].value
 basedate = dt.date.today() if 'basedate' not in inputvars else dt.datetime.strptime(inputvars['basedate'].value, '%Y-%m-%d')
 
-for event in getEvents(basedate, interval):
-    name = event['NAME']
+# Make request to grep all events in interval
+events = getEvents(basedate, interval)
 
-    article = ET.Element('article')
-    h1 = ET.Element('h1')
-    span = ET.Element('span')
+if format == 'html':
+    tree = ET.ElementTree()
+    main = ET.Element('main')
+    tree._setroot(main)
 
-    h1.text = name
-    span.text = event['DATETIME'].strftime('%-d %B %Y')
-    if not (event['ALLDAY']):
-        span.text += ' alle ' + event['DATETIME'].strftime('%-I:%-M')
+    for event in events:
+        name = event['NAME']
 
-    article.append(h1)
-    article.append(span)
+        article = ET.Element('article')
+        h1 = ET.Element('h1')
+        span = ET.Element('span')
 
-    main.append(article)
+        h1.text = name
+        span.text = event['DATETIME'].strftime('%-d %B %Y')
+        if not (event['ALLDAY']):
+            span.text += ' alle ' + event['DATETIME'].strftime('%-I:%-M')
 
-htmlString = ET.tostring(tree.getroot(), encoding='unicode', method='html')
-print(htmlString)
+        article.append(h1)
+        article.append(span)
+
+        main.append(article)
+
+    htmlString = ET.tostring(tree.getroot(), encoding='unicode', method='html')
+    print(htmlString)
+else:
+    # stringify dates to be JSON-serialized
+    for event in events:
+        event['DATETIME'] = str(event['DATETIME'])
+    print(json.dumps(events, indent=4))
