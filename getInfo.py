@@ -19,20 +19,19 @@ def parseOptions(arr):
     return options
 
 def getEvents(baseDay, interval):
-  # Calculate timestamp of previous and following monday
   if interval == 'week':
-    leftLimit = (baseDay+dt.timedelta(days=-baseDay.weekday(), weeks=1)).strftime('%s')
+    rightLimit = (baseDay+dt.timedelta(weeks=1)).strftime('%s')
   elif interval == '4weeks':
-    leftLimit = (baseDay+dt.timedelta(days=-baseDay.weekday(), weeks=4)).strftime('%s')
+    rightLimit = (baseDay+dt.timedelta(weeks=4)).strftime('%s')
   else:
     raise ValueError('Invalid argument passed to getEvents')
-  rightLimit = (baseDay-dt.timedelta(days=baseDay.weekday())).strftime('%s')
+  leftLimit = baseDay.strftime('%s')
 
   c = sql.connect(unix_socket=UNIX_SOCKET, host=HOST, user=USER, password=PASSWORD, db=DB)
   mycursor = c.cursor()
   # For repeated events (not yet supported)
   #sql = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='prova'AND obj.firstoccurence < %s AND obj.lastoccurence > %s" % (leftLimit, rightLimit)
-  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.firstoccurence > %s" % (CALENDAR_NAME,leftLimit, rightLimit)
+  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.firstoccurence > %s" % (CALENDAR_NAME, rightLimit, leftLimit)
   mycursor.execute(query)
   result = mycursor.fetchall()
   c.close()
