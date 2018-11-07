@@ -3,7 +3,7 @@ import mysql.connector as sql
 import datetime as dt
 import sys
 import re
-from config import *
+import glob
 
 def parseOptions(arr):
   if len(arr) == 1:
@@ -27,11 +27,11 @@ def getEvents(baseDay, interval):
     raise ValueError('Invalid argument passed to getEvents')
   leftLimit = baseDay.strftime('%s')
 
-  c = sql.connect(unix_socket=UNIX_SOCKET, host=HOST, user=USER, password=PASSWORD, db=DB)
+  c = sql.connect(unix_socket=glob.cfg['mysql']['unix_socket'], host=glob.cfg['mysql']['host'], user=glob.cfg['mysql']['user'], password=glob.cfg['mysql']['password'], db=glob.cfg['mysql']['db'])
   mycursor = c.cursor()
   # For repeated events (not yet supported)
   #sql = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='prova'AND obj.firstoccurence < %s AND obj.lastoccurence > %s" % (leftLimit, rightLimit)
-  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.firstoccurence > %s" % (CALENDAR_NAME, rightLimit, leftLimit)
+  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.firstoccurence > %s" % (glob.cfg['caldav']['cal_name'], rightLimit, leftLimit)
   mycursor.execute(query)
   result = mycursor.fetchall()
   c.close()

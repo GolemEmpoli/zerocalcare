@@ -1,2 +1,6 @@
-config.py
+__pycache__/
+conf/*custom.ini
 .directory
+*.swp
+*~
+*.pyc
