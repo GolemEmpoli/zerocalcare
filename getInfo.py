@@ -80,6 +80,8 @@ def getEvents(baseDay, interval):
               event_dict['DATETIME'] = dt.datetime.strptime(options['RAW'],'%Y%m%dT%H%M%S')
               event_dict['ALLDAY'] = False
             #print("StartDate: %s" % event_dict['DATETIME'])
+          elif k[0] == 'LOCATION':
+              event_dict['LOCATION'] = k[1]
           elif k[0] == 'RRULE':
             continue
 
