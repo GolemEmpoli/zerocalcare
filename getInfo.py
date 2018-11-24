@@ -137,22 +137,28 @@ def getEvents(baseDay, interval):
   # Return events sorted by date, AllDay first
   return sorted(events, key=lambda k: "%s %d" % (k['DATETIME'],k['ALLDAY'] == 0))
 
-# Check if this file is executed as main file or included
-######## SHOW DATA #######
+# Only for test purposes
 if __name__ == '__main__':
-    print("ZERo Optimized CALdav CAlendar Reader Engine")
-    print("--------------------------------------------")
+  print("ZERo Optimized CALdav CAlendar Reader Engine")
+  print("--------------------------------------------")
 
-    events = getEvents(dt.datetime.today(),'week')
 
-    for event in events:
-        try:
-          print ("Event Name: %s" % event['NAME'])
-          print ("Event Date: %s" % event['DATETIME'].date())
-          if event['ALLDAY']:
-              print("All Day")
-          else:
-              print ("Event Time: %s" % event['DATETIME'].time())
-        except :
-          print("Malformed event")
-        print("----------------")
+  baseDay = dt.datetime.today()
+  interval = 'week'
+  if len(sys.argv) == 3:
+    baseDay += dt.timedelta(days=int(sys.argv[1]))
+    interval = sys.argv[2]
+
+  events = getEvents(baseDay, interval)
+
+  for event in events:
+      try:
+        print ("Event Name: %s" % event['NAME'])
+        print ("Event Date: %s" % event['DATETIME'].date())
+        if event['ALLDAY']:
+            print("All Day")
+        else:
+            print ("Event Time: %s" % event['DATETIME'].time())
+      except :
+        print("Malformed event")
+      print("----------------")
