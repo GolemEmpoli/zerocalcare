@@ -82,9 +82,9 @@ def getEvents(baseDay, interval):
               event_dict['DATETIME']  = dt.datetime.strptime(options['RAW'],'%Y%m%d')
               event_dict['ALLDAY'] = True
             else:
-              event_parsed_dt = dt.datetime.strptime(options['RAW'], event_fmt)
-              event_parsed_dt = event_parsed_dt.replace(tzinfo=event_tz)
               local_tz = pytz.timezone(glob.cfg['caldav']['local_tz'])
+              event_parsed_dt = dt.datetime.strptime(options['RAW'], event_fmt)
+              event_parsed_dt = event_tz.localize(event_parsed_dt)
               event_dict['DATETIME'] = event_parsed_dt.astimezone(local_tz)
               event_dict['ALLDAY'] = False
           elif k[0] == 'LOCATION':
