@@ -4,6 +4,7 @@ import datetime as dt
 import sys
 import re
 import glob
+import pytz
 
 def parseOptions(arr):
   if len(arr) == 1:
@@ -67,11 +68,24 @@ def getEvents(baseDay, interval):
             event_dict['NAME'] = k[1]
           elif k[0] == 'DTSTART':
             options = parseOptions(k[1:])
+
+            if 'TZID' in options:
+              event_tz = pytz.timezone(options['TZID'])
+              event_fmt = "%Y%m%dT%H%M%S"
+            # If TZID flag is not specified, datetime is UTC
+            else:
+              event_tz = pytz.timezone('UTC')
+              event_fmt = "%Y%m%dT%H%M%SZ"
+
+            # Check if time is set and then localize it
             if 'VALUE' in options and options['VALUE'] == 'DATE':
               event_dict['DATETIME']  = dt.datetime.strptime(options['RAW'],'%Y%m%d')
               event_dict['ALLDAY'] = True
             else:
-              event_dict['DATETIME'] = dt.datetime.strptime(options['RAW'],'%Y%m%dT%H%M%S')
+              event_parsed_dt = dt.datetime.strptime(options['RAW'], event_fmt)
+              event_parsed_dt = event_parsed_dt.replace(tzinfo=event_tz)
+              local_tz = pytz.timezone(glob.cfg['caldav']['local_tz'])
+              event_dict['DATETIME'] = event_parsed_dt.astimezone(local_tz)
               event_dict['ALLDAY'] = False
           elif k[0] == 'LOCATION':
               event_dict['LOCATION'] = k[1]
