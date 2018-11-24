@@ -7,7 +7,7 @@ import glob
 
 def parseOptions(arr):
   if len(arr) == 1:
-    return {'RAW':arr}
+    return {'RAW': arr[0]}
   else:
     options = {}
     for i in arr:
@@ -39,9 +39,8 @@ def getEvents(baseDay, interval):
   events = []
 
   for event in result:
-    #print (event)
-    event = event[0].decode('utf8') # i selected only first column
-    #print (event)
+     # selected only first column
+    event = event[0].decode('utf8')
     blockParsing = None
 
     event_dict = {}
@@ -66,20 +65,14 @@ def getEvents(baseDay, interval):
           if k[0] == 'SUMMARY':
             # save event name
             event_dict['NAME'] = k[1]
-            #print("Event Name: %s" % event_dict['NAME'])
           elif k[0] == 'DTSTART':
-            # check if len(k) > 2
-            # if yes, date has a not-datetime format
-            # (i.e. only date for all-day events).
             options = parseOptions(k[1:])
-            #print("Options %s" % options)
             if 'VALUE' in options and options['VALUE'] == 'DATE':
               event_dict['DATETIME']  = dt.datetime.strptime(options['RAW'],'%Y%m%d')
               event_dict['ALLDAY'] = True
             else:
               event_dict['DATETIME'] = dt.datetime.strptime(options['RAW'],'%Y%m%dT%H%M%S')
               event_dict['ALLDAY'] = False
-            #print("StartDate: %s" % event_dict['DATETIME'])
           elif k[0] == 'LOCATION':
               event_dict['LOCATION'] = k[1]
           elif k[0] == 'RRULE':
