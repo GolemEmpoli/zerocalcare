@@ -29,7 +29,7 @@ print()
 
 # get BaseDate and interval
 interval = 'week' if 'interval' not in inputvars else inputvars['interval'].value
-basedate = dt.date.today() if 'basedate' not in inputvars else dt.datetime.strptime(inputvars['basedate'].value, '%Y-%m-%d')
+basedate = dt.datetime.today() if 'basedate' not in inputvars else dt.datetime.strptime(inputvars['basedate'].value, '%Y-%m-%d')
 
 # Make request to grep all events in interval
 events = getEvents(basedate, interval)

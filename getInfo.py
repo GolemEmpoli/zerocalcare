@@ -1,38 +1,49 @@
 #!/usr/bin/python3
 import mysql.connector as sql
 import datetime as dt
+import dateutil.relativedelta as rd
 import sys
 import re
 import glob
 import pytz
 
+# Parameter: list of options in format key=value
+# Returns: dictionary of given options in format
+#         {key : value, ...}
 def parseOptions(arr):
-  if len(arr) == 1:
-    return {'RAW': arr[0]}
-  else:
-    options = {}
-    for i in arr:
-      k = i.split('=')
-      if len(k) == 1:
-        options['RAW'] = k[0]
-      else:
-        options[k[0]] = k[1]
-    return options
+  options = {}
+  for i in arr:
+    k = i.split('=')
+    if len(k) == 1:
+      options['RAW'] = k[0]
+    else:
+      options[k[0]] = k[1]
+  return options
 
+# Parameter: datetime object, interval string in {'week', '4weeks'}
+# Returns: dictionary of events starting from baseDay, inside interval.
+#         {'NAME'       : occurrence name,
+#          'DATETIME'   : date in format YYYY-MM-DD hh:mm:ss+tz_offset,
+#          'ALLDAY'     : boolean, true if event lasts all day. Hour in DATETIME has no meaning,
+#          'LOCATION'   : self explanatory,
+#          'OCCURRENCE' : [optional] number of occurrence in repeated events}
 def getEvents(baseDay, interval):
   if interval == 'week':
-    rightLimit = (baseDay+dt.timedelta(weeks=1)).strftime('%s')
+    rightLimit = (baseDay+dt.timedelta(weeks=1))
   elif interval == '4weeks':
-    rightLimit = (baseDay+dt.timedelta(weeks=4)).strftime('%s')
+    rightLimit = (baseDay+dt.timedelta(weeks=4))
   else:
     raise ValueError('Invalid argument passed to getEvents')
-  leftLimit = baseDay.strftime('%s')
+  leftLimit = baseDay
+
+  local_tz = pytz.timezone(glob.cfg['caldav']['local_tz'])
+  leftLimit = local_tz.localize(leftLimit)
+  rightLimit = local_tz.localize(rightLimit)
 
   c = sql.connect(unix_socket=glob.cfg['mysql']['unix_socket'], host=glob.cfg['mysql']['host'], user=glob.cfg['mysql']['user'], password=glob.cfg['mysql']['password'], db=glob.cfg['mysql']['db'])
   mycursor = c.cursor()
-  # For repeated events (not yet supported)
-  #sql = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='prova'AND obj.firstoccurence < %s AND obj.lastoccurence > %s" % (leftLimit, rightLimit)
-  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.firstoccurence > %s" % (glob.cfg['caldav']['cal_name'], rightLimit, leftLimit)
+  # For repeated events
+  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.lastoccurence > %s" % (glob.cfg['caldav']['cal_name'], rightLimit.strftime('%s'), leftLimit.strftime('%s'))
   mycursor.execute(query)
   result = mycursor.fetchall()
   c.close()
@@ -40,6 +51,8 @@ def getEvents(baseDay, interval):
   events = []
 
   for event in result:
+    repetition = {'single' : True, 'freq' : {'DAILY': 0, 'WEEKLY' : 0, 'MONTHLY' : 0, 'YEARLY': 0}, 'interval' : 1, 'count': 0}
+
      # selected only first column
     event = event[0].decode('utf8')
     blockParsing = None
@@ -79,10 +92,10 @@ def getEvents(baseDay, interval):
 
             # Check if time is set and then localize it
             if 'VALUE' in options and options['VALUE'] == 'DATE':
-              event_dict['DATETIME']  = dt.datetime.strptime(options['RAW'],'%Y%m%d')
+              event_parsed_dt = dt.datetime.strptime(options['RAW'],'%Y%m%d')
+              event_dict['DATETIME'] = local_tz.localize(event_parsed_dt)
               event_dict['ALLDAY'] = True
             else:
-              local_tz = pytz.timezone(glob.cfg['caldav']['local_tz'])
               event_parsed_dt = dt.datetime.strptime(options['RAW'], event_fmt)
               event_parsed_dt = event_tz.localize(event_parsed_dt)
               event_dict['DATETIME'] = event_parsed_dt.astimezone(local_tz)
@@ -90,9 +103,35 @@ def getEvents(baseDay, interval):
           elif k[0] == 'LOCATION':
               event_dict['LOCATION'] = k[1]
           elif k[0] == 'RRULE':
-            continue
+            options = parseOptions(k[1:])
+            repetition['single'] = False
+            repetition['freq'][options['FREQ']] = 1
+            
+            if 'INTERVAL' in options:
+              repetition['interval'] = int(options['INTERVAL'])
+            
+            if 'COUNT' in options:
+              repetition['count'] = int(options['COUNT'])
 
-    events += [event_dict]
+    # If single event push into list
+    if repetition['single'] == True:
+      events += [event_dict]
+    else:
+      event_count = 1
+      # Get first event inside interval
+      while event_dict['DATETIME'] < leftLimit:
+        event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
+        event_count += 1
+      
+      # Push all events inside interval
+      while event_dict['DATETIME'] < rightLimit:
+        event_dict['OCCURRENCE'] = event_count
+        events += [event_dict.copy()]
+        if repetition['count'] == event_count:
+          break
+        event_count+=1
+        event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
+        
 
   # Thanks stackoverflow
   # Return events sorted by date, AllDay first
