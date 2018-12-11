@@ -20,7 +20,7 @@ def parseOptions(arr):
       options[k[0]] = k[1]
   return options
 
-# Parameter: datetime object, interval string in {'week', '4weeks'}
+# Parameter: datetime object, interval string in {'today', 'week', '4weeks'}
 # Returns: dictionary of events starting from baseDay, inside interval.
 #         {'NAME'       : occurrence name,
 #          'DATETIME'   : date in format YYYY-MM-DD hh:mm:ss+tz_offset,
@@ -28,7 +28,9 @@ def parseOptions(arr):
 #          'LOCATION'   : self explanatory,
 #          'OCCURRENCE' : [optional] number of occurrence in repeated events}
 def getEvents(baseDay, interval):
-  if interval == 'week':
+  if   interval == 'today':
+    rightLimit = (baseDay+dt.timedelta(days=1))
+  elif interval == 'week':
     rightLimit = (baseDay+dt.timedelta(weeks=1))
   elif interval == '4weeks':
     rightLimit = (baseDay+dt.timedelta(weeks=4))
@@ -106,10 +108,10 @@ def getEvents(baseDay, interval):
             options = parseOptions(k[1:])
             repetition['single'] = False
             repetition['freq'][options['FREQ']] = 1
-            
+
             if 'INTERVAL' in options:
               repetition['interval'] = int(options['INTERVAL'])
-            
+
             if 'COUNT' in options:
               repetition['count'] = int(options['COUNT'])
 
@@ -122,7 +124,7 @@ def getEvents(baseDay, interval):
       while event_dict['DATETIME'] < leftLimit:
         event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
         event_count += 1
-      
+
       # Push all events inside interval
       while event_dict['DATETIME'] < rightLimit:
         event_dict['OCCURRENCE'] = event_count
@@ -131,7 +133,7 @@ def getEvents(baseDay, interval):
           break
         event_count+=1
         event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
-        
+
 
   # Thanks stackoverflow
   # Return events sorted by date, AllDay first
