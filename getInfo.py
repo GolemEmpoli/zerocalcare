@@ -53,7 +53,7 @@ def getEvents(baseDay, interval):
   events = []
 
   for event in result:
-    repetition = {'single' : True, 'freq' : {'DAILY': 0, 'WEEKLY' : 0, 'MONTHLY' : 0, 'YEARLY': 0}, 'interval' : 1, 'count': 0}
+    repetition = {'single' : True, 'freq' : {'DAILY': 0, 'WEEKLY' : 0, 'MONTHLY' : 0, 'YEARLY': 0}, 'interval' : 1, 'count': 0, 'until' : None}
 
      # selected only first column
     event = event[0].decode('utf8')
@@ -115,6 +115,16 @@ def getEvents(baseDay, interval):
             if 'COUNT' in options:
               repetition['count'] = int(options['COUNT'])
 
+            if 'UNTIL' in options:
+                try:
+                  fmt = "%Y%m%dT%H%M%SZ"
+                  repetition['until'] = dt.datetime.strptime(options['UNTIL'], fmt)
+                  repetition['until'] = local_tz.localize(repetition['until'])
+                  # Strip out time because is meaningless
+                  repetition['until'] = repetition['until'].date()
+                except:
+                  repetition['until'] = None
+
     # If single event push into list
     if repetition['single'] == True:
       events += [event_dict]
@@ -126,7 +136,7 @@ def getEvents(baseDay, interval):
         event_count += 1
 
       # Push all events inside interval
-      while event_dict['DATETIME'] < rightLimit:
+      while event_dict['DATETIME'] < rightLimit and (repetition['until'] is not None and repetition['until'] >= event_dict['DATETIME'].date()):
         event_dict['OCCURRENCE'] = event_count
         events += [event_dict.copy()]
         if repetition['count'] == event_count:
