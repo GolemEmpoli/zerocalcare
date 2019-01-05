@@ -25,7 +25,7 @@ function zerocalcareDisplay() {
             dateElement.appendChild(document.createTextNode('📅  ' + m.format('dddd D MMMM YYYY') ));
 
             var timeElement = document.createElement('div');
-            var timeString = (json_obj[i]['ALL_DAY'] == true) ? 'Tutto il giorno' : ('ore ' + m.format('HH:mm'));
+            var timeString = (json_obj[i]['ALLDAY'] == true) ? 'Tutto il giorno' : ('ore ' + m.format('HH:mm'));
             timeElement.appendChild(document.createTextNode('⏰ ' + timeString));
 
             // add if location is not empty -- default location should be selected by backend
