@@ -136,7 +136,7 @@ def getEvents(baseDay, interval):
         event_count += 1
 
       # Push all events inside interval
-      while event_dict['DATETIME'] < rightLimit and (repetition['until'] is not None and repetition['until'] >= event_dict['DATETIME'].date()):
+      while event_dict['DATETIME'] < rightLimit and (repetition['until'] is None or repetition['until'] >= event_dict['DATETIME'].date()):
         event_dict['OCCURRENCE'] = event_count
         events += [event_dict.copy()]
         if repetition['count'] == event_count:
