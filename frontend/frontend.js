@@ -6,6 +6,10 @@ function zerocalcareDisplay() {
 
         var json_obj = JSON.parse(xhr.responseText);
 
+        if (json_obj.length == 0) {
+            zerocalcareOutput.childNodes[0].textContent = 'Nessun appuntamento in programma';
+        }
+
         for (i in json_obj) {
             // Future improvements needed for a better backend output date in ISO format
             // Now we have to parse the string :( very very ugly
