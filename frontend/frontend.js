@@ -12,8 +12,8 @@ function zerocalcareDisplay() {
         }
 
         var eventsContainer = {
-            Corsi : null,
-            Eventi : null
+            Eventi : null,
+            Corsi : null
         };
 
         for (c in eventsContainer) {
