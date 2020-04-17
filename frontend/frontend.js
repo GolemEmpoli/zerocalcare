@@ -1,10 +1,10 @@
+"use strict";
 function zerocalcareDisplay() {
+    const zerocalcareOutput = document.getElementById('zerocalcareOutput');
 
-    zerocalcareOutput = document.getElementById('zerocalcareOutput');
+    if (this.readyState == 4 && this.status == 200) {
 
-    if (xhr.readyState == 4 && xhr.status == 200) {
-
-        var json_obj = JSON.parse(xhr.responseText);
+        var json_obj = JSON.parse(this.responseText);
 
         if (json_obj.length == 0) {
             zerocalcareOutput.childNodes[0].textContent = 'Nessun appuntamento in programma';
@@ -116,9 +116,8 @@ function zerocalcareDisplay() {
 }
 
 function zerocalcareTrigger() {
-    xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.onload = zerocalcareDisplay;
     xhr.open('GET', 'https://golem.linux.it/cgi/zerocalcare/main.py?interval=4weeks', true);
     xhr.send(null);
-
 }
