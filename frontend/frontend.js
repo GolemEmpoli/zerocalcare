@@ -41,8 +41,20 @@ function zerocalcareDisplay() {
                 var locationString = 'Officina Informatica';
             }
             locationElement.appendChild(document.createTextNode('📍  ' + locationString));
-
+            
             eventElement.appendChild(titleElement);
+            // Check if event is not confirmed
+            if (typeof json_obj[i]['CLASS'] !== 'undefined' && json_obj[i]['CLASS'] == true) {
+                var unconfirmedElement = document.createElement('div');
+                unconfirmedElement.style.fontWeight = 'bold';
+                unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
+                // Strike time, date and location to remark this concept                
+                dateElement.style.textDecoration = 'line-through';
+                timeElement.style.textDecoration = 'line-through';
+                locationElement.style.textDecoration = 'line-through';
+                
+                eventElement.appendChild(unconfirmedElement);
+            }
             eventElement.appendChild(dateElement);
             eventElement.appendChild(timeElement);
             eventElement.appendChild(locationElement);
