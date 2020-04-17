@@ -117,7 +117,7 @@ def getEvents(baseDay, interval):
 
             if 'UNTIL' in options:
                 try:
-                  fmt = "%Y%m%dT%H%M%SZ"
+                  fmt = "%Y%m%dT%H%M%S"
                   repetition['until'] = dt.datetime.strptime(options['UNTIL'], fmt)
                   repetition['until'] = local_tz.localize(repetition['until'])
                   # Strip out time because is meaningless
