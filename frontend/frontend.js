@@ -98,7 +98,7 @@ function zerocalcareDisplay() {
             eventElement.appendChild(locationElement);
             
             if (typeof json_obj[i]['CATEGORIES'] === 'object') {
-                if ('Corsi' in json_obj[i]['CATEGORIES']) {
+                if (json_obj[i]['CATEGORIES'].includes('Corsi')) {
                     eventsContainer['Corsi'].appendChild(eventElement);
                 }
                 else {
