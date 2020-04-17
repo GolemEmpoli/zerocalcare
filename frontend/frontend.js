@@ -60,13 +60,13 @@ function zerocalcareDisplay() {
             // Check if event is not confirmed
             if (typeof json_obj[i]['STATUS'] === 'string') {
                 // Strike time, date and location to remark this concept
-                var strikeEvent = function () {
+                var strikeEvent = function (message) {
                     dateText.style.textDecoration = 'line-through';
                     timeText.style.textDecoration = 'line-through';
                     locationText.style.textDecoration = 'line-through';
                     var unconfirmedElement = document.createElement('div');
                     unconfirmedElement.style.fontWeight = 'bold';
-                    unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
+                    unconfirmedElement.appendChild(document.createTextNode(message));
                     eventElement.appendChild(unconfirmedElement);
                 }
                 
