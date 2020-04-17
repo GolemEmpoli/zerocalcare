@@ -96,12 +96,14 @@ function zerocalcareDisplay() {
             eventElement.appendChild(dateElement);
             eventElement.appendChild(timeElement);
             eventElement.appendChild(locationElement);
-
-            if ('Corsi' in json_obj[i]['CATEGORIES']) {
-                eventsContainer[Corsi].appendChild(eventElement);
-            }
-            else {
-                coursesContainer[Eventi].appendChild(eventElement);
+            
+            if (typeof json_obj[i]['CATEGORIES'] === 'object') {
+                if ('Corsi' in json_obj[i]['CATEGORIES']) {
+                    eventsContainer[Corsi].appendChild(eventElement);
+                }
+                else {
+                    coursesContainer[Eventi].appendChild(eventElement);
+                }
             }
         }
     }
