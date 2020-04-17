@@ -129,6 +129,10 @@ def getEvents(baseDay, interval):
             event_dict['CLASS'] = k[1]
           elif k[0] == 'STATUS':
             event_dict['STATUS'] = k[1]
+          elif k[0] == 'CATEGORIES':
+            if 'CATEGORIES' not in event_dict:
+              event_dict['CATEGORIES'] = []
+            event_dict['CATEGORIES'] += [k[1]]
     # If single event push into list
     if repetition['single'] == True:
       events += [event_dict]
