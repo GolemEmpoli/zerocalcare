@@ -8,6 +8,22 @@ function zerocalcareDisplay() {
 
         if (json_obj.length == 0) {
             zerocalcareOutput.childNodes[0].textContent = 'Nessun appuntamento in programma';
+            return
+        }
+
+        var eventsContainer = {
+            Corsi : null,
+            Eventi : null
+        };
+
+        for (c in eventsContainer) {
+            eventsContainer[c] = document.createElement('div');
+            var titleElement = document.createElement('h4');
+            titleElement.appendChild(document.createTextNode(c));
+            titleElement.style.fontStyle = 'italic';
+            titleElement.classList.add('widget-title');
+            var coursesContainer = document.createElement('div');
+            zerocalcareOutput.appendChild(eventsContainer[c]);
         }
 
         for (i in json_obj) {
@@ -80,7 +96,13 @@ function zerocalcareDisplay() {
             eventElement.appendChild(dateElement);
             eventElement.appendChild(timeElement);
             eventElement.appendChild(locationElement);
-            zerocalcareOutput.appendChild(eventElement);
+
+            if ('Corsi' in json_obj[i]['CATEGORIES']) {
+                eventsContainer[Corsi].appendChild(eventElement);
+            }
+            else {
+                coursesContainer[Eventi].appendChild(eventElement);
+            }
         }
     }
     else {
