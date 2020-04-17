@@ -27,7 +27,7 @@ function zerocalcareDisplay() {
 
             var dateElement = document.createElement('div');
             var dateText = document.createElement('span');
-            dateText.appendChild(document.createTextNode(m.format('dddd D MMMM YYYY'));
+            dateText.appendChild(document.createTextNode(m.format('dddd D MMMM YYYY')));
             dateElement.appendChild(document.createTextNode('📅  '));
             dateElement.appendChild(dateText);
 
