@@ -16,7 +16,7 @@ function zerocalcareDisplay() {
             Corsi : null
         };
 
-        for (c in eventsContainer) {
+        for (var c in eventsContainer) {
             eventsContainer[c] = document.createElement('div');
             var titleElement = document.createElement('h4');
             titleElement.appendChild(document.createTextNode(c));
@@ -26,7 +26,7 @@ function zerocalcareDisplay() {
             zerocalcareOutput.appendChild(eventsContainer[c]);
         }
 
-        for (i in json_obj) {
+        for (var i in json_obj) {
             // Do not display private events
             if (typeof json_obj[i]['CLASS'] === 'string' && json_obj[i]['CLASS'] == 'PRIVATE') {
                 continue;
