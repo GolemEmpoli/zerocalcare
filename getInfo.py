@@ -124,7 +124,9 @@ def getEvents(baseDay, interval):
                   repetition['until'] = repetition['until'].date()
                 except:
                   repetition['until'] = None
-
+          elif k[0] == 'CLASS':
+            # Store a boolean flag. True if PRIVATE
+            event_dict['CLASS'] = k[1].lower() == 'private'
     # If single event push into list
     if repetition['single'] == True:
       events += [event_dict]
