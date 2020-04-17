@@ -22,7 +22,7 @@ function zerocalcareDisplay() {
             titleElement.appendChild(document.createTextNode(c));
             titleElement.style.fontStyle = 'italic';
             titleElement.classList.add('widget-title');
-            var coursesContainer = document.createElement('div');
+            eventsContainer[c].appendChild(titleElement);
             zerocalcareOutput.appendChild(eventsContainer[c]);
         }
 
@@ -99,11 +99,14 @@ function zerocalcareDisplay() {
             
             if (typeof json_obj[i]['CATEGORIES'] === 'object') {
                 if ('Corsi' in json_obj[i]['CATEGORIES']) {
-                    eventsContainer[Corsi].appendChild(eventElement);
+                    eventsContainer['Corsi'].appendChild(eventElement);
                 }
                 else {
-                    coursesContainer[Eventi].appendChild(eventElement);
+                    eventsContainer['Eventi'].appendChild(eventElement);
                 }
+            }
+            else {
+                eventsContainer['Eventi'].appendChild(eventElement);
             }
         }
     }
