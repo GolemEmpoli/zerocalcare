@@ -11,6 +11,11 @@ function zerocalcareDisplay() {
         }
 
         for (i in json_obj) {
+            // Do not display private events
+            if (typeof json_obj[i]['CLASS'] === 'string' && json_obj[i]['CLASS'] == 'PRIVATE') {
+                continue;
+            }
+
             // Future improvements needed for a better backend output date in ISO format
             // Now we have to parse the string :( very very ugly
             var date = new Date(json_obj[i]['DATETIME']);
@@ -53,16 +58,24 @@ function zerocalcareDisplay() {
             
             eventElement.appendChild(titleElement);
             // Check if event is not confirmed
-            if (typeof json_obj[i]['CLASS'] !== 'undefined' && json_obj[i]['CLASS'] == true) {
-                var unconfirmedElement = document.createElement('div');
-                unconfirmedElement.style.fontWeight = 'bold';
-                unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
-                // Strike time, date and location to remark this concept                
-                dateText.style.textDecoration = 'line-through';
-                timeText.style.textDecoration = 'line-through';
-                locationText.style.textDecoration = 'line-through';
+            if (typeof json_obj[i]['STATUS'] === 'string') {
+                // Strike time, date and location to remark this concept
+                var strikeEvent = function () {
+                    dateText.style.textDecoration = 'line-through';
+                    timeText.style.textDecoration = 'line-through';
+                    locationText.style.textDecoration = 'line-through';
+                    var unconfirmedElement = document.createElement('div');
+                    unconfirmedElement.style.fontWeight = 'bold';
+                    unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
+                    eventElement.appendChild(unconfirmedElement);
+                }
                 
-                eventElement.appendChild(unconfirmedElement);
+                if (json_obj[i]['STATUS'] == 'TENTATIVE') {
+                    strikeEvent('⚠️ Non confermato!');
+                }
+                else if (json_obj[i]['STATUS'] == 'CANCELLED') {
+                    strikeEvent('⚠️ Cancellato!');
+                }
             }
             eventElement.appendChild(dateElement);
             eventElement.appendChild(timeElement);
