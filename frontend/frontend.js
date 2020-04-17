@@ -26,21 +26,30 @@ function zerocalcareDisplay() {
             titleElement.classList.add('widget-title');
 
             var dateElement = document.createElement('div');
-            dateElement.appendChild(document.createTextNode('📅  ' + m.format('dddd D MMMM YYYY') ));
+            var dateText = document.createElement('span');
+            dateText.appendChild(document.createTextNode(m.format('dddd D MMMM YYYY'));
+            dateElement.appendChild(document.createTextNode('📅  '));
+            dateElement.appendChild(dateText);
 
             var timeElement = document.createElement('div');
+            var timeText = document.createElement('span');
             var timeString = (json_obj[i]['ALLDAY'] == true) ? 'Tutto il giorno' : ('ore ' + m.format('HH:mm'));
-            timeElement.appendChild(document.createTextNode('⏰ ' + timeString));
+            timeText.appendChild(document.createTextNode(timeString));
+            timeElement.appendChild(document.createTextNode('⏰ '));
+            timeElement.appendChild(timeText);
+            
 
             // add if location is not empty -- default location should be selected by backend
             var locationElement = document.createElement('div');
+            var locationText = document.createElement('span');
             if (typeof json_obj[i]['LOCATION'] !== 'undefined' && json_obj[i]['LOCATION'] != '') {
-                var locationString = json_obj[i]['LOCATION'];
+                locationText.appendChild(document.createTextNode(json_obj[i]['LOCATION']));
             }
             else {
-                var locationString = 'Officina Informatica';
+                locationText.appendChild(document.createTextNode('Officina Informatica'));
             }
-            locationElement.appendChild(document.createTextNode('📍  ' + locationString));
+            locationElement.appendChild(document.createTextNode('📍  '));
+            locationElement.appendChild(locationText);
             
             eventElement.appendChild(titleElement);
             // Check if event is not confirmed
@@ -49,9 +58,9 @@ function zerocalcareDisplay() {
                 unconfirmedElement.style.fontWeight = 'bold';
                 unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
                 // Strike time, date and location to remark this concept                
-                dateElement.style.textDecoration = 'line-through';
-                timeElement.style.textDecoration = 'line-through';
-                locationElement.style.textDecoration = 'line-through';
+                dateText.style.textDecoration = 'line-through';
+                timeText.style.textDecoration = 'line-through';
+                locationText.style.textDecoration = 'line-through';
                 
                 eventElement.appendChild(unconfirmedElement);
             }
