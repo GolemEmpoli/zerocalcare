@@ -59,22 +59,30 @@ function zerocalcareDisplay() {
             eventElement.appendChild(titleElement);
             // Check if event is not confirmed
             if (typeof json_obj[i]['STATUS'] === 'string') {
-                // Strike time, date and location to remark this concept
-                var strikeEvent = function (message) {
+                if (json_obj[i]['STATUS'] == 'TENTATIVE') {
+                    // Make the text a bit lighter and italic
+                    dateText.style.fontStyle =
+                    timeText.style.fontStyle =
+                    locationText.style.fontStyle = 'italic';
+                    dateText.style.color =
+                    timeText.style.color =
+                    locationText.style.color = 'gray';
+                    // Add note
+                    var unconfirmedElement = document.createElement('div');
+                    unconfirmedElement.style.fontWeight = 'bold';
+                    unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
+                    eventElement.appendChild(unconfirmedElement);
+                }
+                else if (json_obj[i]['STATUS'] == 'CANCELLED') {
+                    // Strike time, date and location to remark this concept
                     dateText.style.textDecoration = 'line-through';
                     timeText.style.textDecoration = 'line-through';
                     locationText.style.textDecoration = 'line-through';
+                    // Add note
                     var unconfirmedElement = document.createElement('div');
                     unconfirmedElement.style.fontWeight = 'bold';
-                    unconfirmedElement.appendChild(document.createTextNode(message));
+                    unconfirmedElement.appendChild(document.createTextNode('⚠️ Cancellato!'));
                     eventElement.appendChild(unconfirmedElement);
-                }
-                
-                if (json_obj[i]['STATUS'] == 'TENTATIVE') {
-                    strikeEvent('⚠️ Non confermato!');
-                }
-                else if (json_obj[i]['STATUS'] == 'CANCELLED') {
-                    strikeEvent('⚠️ Cancellato!');
                 }
             }
             eventElement.appendChild(dateElement);
