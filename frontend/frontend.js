@@ -26,7 +26,7 @@ function zerocalcareDisplay() {
             var eventElement = document.createElement('div');
 
             var titleElement = document.createElement('h5');
-            titleElement.appendChild(document.createTextNode(json_obj[i]['NAME']));
+            titleElement.appendChild(document.createTextNode(decodeURI(json_obj[i]['NAME'])));
             titleElement.style.fontStyle = 'italic';
             titleElement.classList.add('widget-title');
 
