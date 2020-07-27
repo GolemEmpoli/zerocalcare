@@ -5,10 +5,7 @@ function zerocalcareDisplay() {
     if (xhr.readyState == 4 && xhr.status == 200) {
 
         var json_obj = JSON.parse(xhr.responseText);
-
-        if (json_obj.length == 0) {
-            zerocalcareOutput.childNodes[0].textContent = 'Nessun appuntamento in programma';
-        }
+        var atLeastOne = false; 
 
         for (i in json_obj) {
             // Do not display private events
@@ -89,6 +86,11 @@ function zerocalcareDisplay() {
             eventElement.appendChild(timeElement);
             eventElement.appendChild(locationElement);
             zerocalcareOutput.appendChild(eventElement);
+            atLeastOne = true;
+        }
+
+        if (atLeastOne == false) {
+            zerocalcareOutput.childNodes[0].textContent = 'Nessun appuntamento in programma';
         }
     }
     else {
