@@ -28,21 +28,20 @@ function zerocalcareDisplay() {
             titleElement.classList.add('widget-title');
             eventElement.appendChild(titleElement);
 
+            var contentEventElement = document.createElement('div');
+            eventElement.appendChild(contentEventElement);
+
             // Check if event is not confirmed
             if (typeof json_obj[i]['STATUS'] === 'string') {
                 if (json_obj[i]['STATUS'] == 'TENTATIVE') {
                     // Make the text a bit lighter and italic
-                    dateText.style.fontStyle =
-                    timeText.style.fontStyle =
-                    locationText.style.fontStyle = 'italic';
-                    dateText.style.color =
-                    timeText.style.color =
-                    locationText.style.color = 'gray';
+                    contentEventElement.style.fontStyle = 'italic';
+                    contentEventElement.style.color = 'gray';
                     // Add note
                     var unconfirmedElement = document.createElement('div');
                     unconfirmedElement.style.fontWeight = 'bold';
                     unconfirmedElement.appendChild(document.createTextNode('⚠️ Non confermato!'));
-                    eventElement.appendChild(unconfirmedElement);
+                    contentEventElement.appendChild(unconfirmedElement);
                 }
                 else if (json_obj[i]['STATUS'] == 'CANCELLED') {
                     // Strike time, date and location to remark this concept
@@ -53,7 +52,7 @@ function zerocalcareDisplay() {
                     var unconfirmedElement = document.createElement('div');
                     unconfirmedElement.style.fontWeight = 'bold';
                     unconfirmedElement.appendChild(document.createTextNode('⚠️ Cancellato!'));
-                    eventElement.appendChild(unconfirmedElement);
+                    contentEventElement.appendChild(unconfirmedElement);
                 }
             }
 
@@ -62,7 +61,7 @@ function zerocalcareDisplay() {
             dateText.appendChild(document.createTextNode(m.format('dddd D MMMM YYYY')));
             dateElement.appendChild(document.createTextNode('📅  '));
             dateElement.appendChild(dateText);
-            eventElement.appendChild(dateElement);
+            contentEventElement.appendChild(dateElement);
 
             var timeElement = document.createElement('div');
             var timeText = document.createElement('span');
@@ -70,7 +69,7 @@ function zerocalcareDisplay() {
             timeText.appendChild(document.createTextNode(timeString));
             timeElement.appendChild(document.createTextNode('⏰ '));
             timeElement.appendChild(timeText);
-            eventElement.appendChild(timeElement);
+            contentEventElement.appendChild(timeElement);
 
             // add if location is not empty -- default location should be selected by backend
             var locationElement = document.createElement('div');
@@ -83,7 +82,7 @@ function zerocalcareDisplay() {
             }
             locationElement.appendChild(document.createTextNode('📍  '));
             locationElement.appendChild(locationText);
-            eventElement.appendChild(locationElement);
+            contentEventElement.appendChild(locationElement);
 
             if (json_obj[i]['DESCRIPTION'] !== undefined && json_obj[i]['DESCRIPTION'] != '') {
                 var descriptionElement = document.createElement('div');
@@ -91,7 +90,7 @@ function zerocalcareDisplay() {
                 descriptionText.appendChild(document.createTextNode(json_obj[i]['DESCRIPTION']));
                 descriptionElement.appendChild(document.createTextNode('📝  '));
                 descriptionElement.appendChild(descriptionText);
-                eventElement.appendChild(descriptionElement);
+                contentEventElement.appendChild(descriptionElement);
             }
                     
             zerocalcareOutput.appendChild(eventElement);
