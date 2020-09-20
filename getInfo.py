@@ -65,6 +65,10 @@ def getEvents(baseDay, interval):
     event_dict = {}
 
     for item in event.split('\r\n'):
+      # ignore empty lines
+      if len(item) == 0:
+        continue
+
       # Check if this line is part of a long content lines (RFC §3.1)
       # i.e. begins with SPACE or HTAB.
       if item[0] == ' ' or item[0] == '\t':
