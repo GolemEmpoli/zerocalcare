@@ -51,6 +51,14 @@ function zerocalcareDisplay() {
             }
             locationElement.appendChild(document.createTextNode('📍  '));
             locationElement.appendChild(locationText);
+
+            if (json_obj[i]['DESCRIPTION'] !== undefined && json_obj[i]['DESCRIPTION'] != '') {
+                var descriptionElement = document.createElement('div');
+                var descriptionText = document.createElement('span');
+                descriptionText.appendChild(document.createTextNode(json_obj[i]['DESCRIPTION']));
+                descriptionElement.appendChild(document.createTextNode('📝  '));
+                descriptionElement.appendChild(descriptionText);
+            }
             
             eventElement.appendChild(titleElement);
             // Check if event is not confirmed
