@@ -73,7 +73,7 @@ def getEvents(baseDay, interval):
       # i.e. begins with SPACE or HTAB.
       if item[0] == ' ' or item[0] == '\t':
         try:
-          event_dict[propertyName] += item.strip()
+          event_dict[propertyName] += item.lstrip()
         except KeyError:
           # Malformed line or, more probably, programmer's error
           pass
