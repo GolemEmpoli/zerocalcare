@@ -104,6 +104,8 @@ def getEvents(baseDay, interval):
               event_dict['ALLDAY'] = False
           elif k[0] == 'LOCATION':
               event_dict['LOCATION'] = k[1]
+          elif k[0] == 'DESCRIPTION':
+              event_dict['DESCRIPTION'] = k[1]
           elif k[0] == 'RRULE':
             options = parseOptions(k[1:])
             repetition['single'] = False
