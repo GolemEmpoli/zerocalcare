@@ -39,12 +39,11 @@ function zerocalcareDisplay() {
             timeText.appendChild(document.createTextNode(timeString));
             timeElement.appendChild(document.createTextNode('⏰ '));
             timeElement.appendChild(timeText);
-            
 
             // add if location is not empty -- default location should be selected by backend
             var locationElement = document.createElement('div');
             var locationText = document.createElement('span');
-            if (typeof json_obj[i]['LOCATION'] !== 'undefined' && json_obj[i]['LOCATION'] != '') {
+            if (typeof json_obj[i]['LOCATION'] !== undefined && json_obj[i]['LOCATION'] != '') {
                 locationText.appendChild(document.createTextNode(json_obj[i]['LOCATION']));
             }
             else {
