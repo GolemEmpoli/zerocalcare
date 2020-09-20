@@ -75,7 +75,7 @@ function zerocalcareDisplay() {
             var locationElement = document.createElement('div');
             var locationText = document.createElement('span');
             if (json_obj[i]['LOCATION'] !== undefined && json_obj[i]['LOCATION'] != '') {
-                locationText.appendChild(document.createTextNode(json_obj[i]['LOCATION']));
+                locationText.appendChild(document.createTextNode(decodeURI(json_obj[i]['LOCATION'])));
             }
             else {
                 locationText.appendChild(document.createTextNode('Officina Informatica'));
@@ -87,7 +87,7 @@ function zerocalcareDisplay() {
             if (json_obj[i]['DESCRIPTION'] !== undefined && json_obj[i]['DESCRIPTION'] != '') {
                 var descriptionElement = document.createElement('div');
                 var descriptionText = document.createElement('span');
-                descriptionText.appendChild(document.createTextNode(json_obj[i]['DESCRIPTION']));
+                descriptionText.appendChild(document.createTextNode(decodeURI(json_obj[i]['DESCRIPTION'])));
                 descriptionElement.appendChild(document.createTextNode('📝  '));
                 descriptionElement.appendChild(descriptionText);
                 contentEventElement.appendChild(descriptionElement);
