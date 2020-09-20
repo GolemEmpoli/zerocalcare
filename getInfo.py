@@ -72,6 +72,8 @@ def getEvents(baseDay, interval):
       # Check if this line is part of a long content lines (RFC §3.1)
       # i.e. begins with SPACE or HTAB.
       if item[0] == ' ' or item[0] == '\t':
+        # Escape text as in §3.3.11
+        item = re.sub(r"\\(.)",r"\1", item)
         try:
           event_dict[propertyName] += item.lstrip()
         except KeyError:
@@ -123,9 +125,9 @@ def getEvents(baseDay, interval):
               event_dict['DATETIME'] = event_parsed_dt.astimezone(local_tz)
               event_dict['ALLDAY'] = False
           elif k[0] == 'LOCATION':
-              event_dict['LOCATION'] = k[1]
+              event_dict['LOCATION'] = re.sub(r"\\(.)",r"\1", k[1])
           elif k[0] == 'DESCRIPTION':
-              event_dict['DESCRIPTION'] = k[1]
+              event_dict['DESCRIPTION'] = re.sub(r"\\(.)",r"\1", k[1])
           elif k[0] == 'RRULE':
             options = parseOptions(k[1:])
             repetition['single'] = False
