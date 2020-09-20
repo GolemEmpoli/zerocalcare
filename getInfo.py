@@ -57,11 +57,25 @@ def getEvents(baseDay, interval):
 
      # selected only first column
     event = event[0].decode('utf8')
+    # Current BEGIN:xxx block name
     blockParsing = None
+    # Current property name (for long content line unfolding, RFC §3.1)
+    propertyName = None
 
     event_dict = {}
 
     for item in event.split('\r\n'):
+      # Check if this line is part of a long content lines (RFC §3.1)
+      # i.e. begins with SPACE or HTAB.
+      if item[0] == ' ' or item[0] == '\t':
+        try:
+          event_dict[propertyName] += item.strip()
+        except KeyError:
+          # Malformed line or, more probably, programmer's error
+          pass
+        continue
+
+      # else... check out for property's name
       try:
         k,v = item.split(':',1)
       except:
@@ -69,6 +83,8 @@ def getEvents(baseDay, interval):
       k = k.split(';')
       v = re.split('(?<!\\\\);',v)
       k += v
+
+      propertyName = k[0]
 
       # Does not work well with nested blocks
       # but nobody cares
