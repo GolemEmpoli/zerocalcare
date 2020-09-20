@@ -106,10 +106,13 @@ function zerocalcareDisplay() {
     }
 }
 
-function zerocalcareTrigger() {
+function zerocalcareTrigger(url) {
+    if (typeof url !== "string")
+        return
+
     xhr = new XMLHttpRequest();
     xhr.onload = zerocalcareDisplay;
-    xhr.open('GET', 'https://golem.linux.it/cgi/zerocalcare/main.py?interval=4weeks', true);
+    xhr.open('GET', url, true);
     xhr.send(null);
 
 }
