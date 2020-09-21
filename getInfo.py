@@ -108,7 +108,7 @@ def getEvents(baseDay, interval):
         if blockParsing == "VEVENT":
           if k[0] == 'SUMMARY':
             # save event name
-            event_dict['NAME'] = k[1]
+            event_dict['NAME'] = escape(k[1])
           elif k[0] == 'DTSTART':
             options = parseOptions(k[1:])
 
