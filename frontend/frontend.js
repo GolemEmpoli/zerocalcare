@@ -91,19 +91,31 @@ function zerocalcareDisplay() {
                 descriptionElement.appendChild(document.createTextNode('📝  '));
                 descriptionElement.appendChild(descriptionText);
                 descriptionElement.style.display = "none";
-                contentEventElement.appendChild(descriptionElement);
 
                 // Display a clickable "..." button.
                 var moreElement = document.createElement('div');
-                moreElement.appendChild(document.createTextNode('ℹ️ Più informazioni...'));
+                var moreShowText = document.createElement('a');
+                var moreHideText = document.createElement('a');
+                
+                moreShowText.appendChild(document.createTextNode('⬇️ Più informazioni...'));
+                moreElement.appendChild(moreShowText);
+                moreHideText.appendChild(document.createTextNode('⬆️ Nascondi informazioni...'));
+                moreHideText.style.display = "none";
+                moreElement.appendChild(moreHideText);
+
                 moreElement.onclick = () => {
                     if (descriptionElement.style.display == "none") {
-                        descriptionElement.style.display = "block";
+                        descriptionElement.style.display  =
+                        moreHideText.style.display = "block";
+                        moreShowText.style.display = "none";
                     } else {
-                        descriptionElement.style.display = "none";
+                        descriptionElement.style.display  =
+                        moreHideText.style.display = "none";
+                        moreShowText.style.display = "block";
                     }
                 };
                 contentEventElement.appendChild(moreElement);
+                contentEventElement.appendChild(descriptionElement);
             }
                     
             zerocalcareOutput.appendChild(eventElement);
