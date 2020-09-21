@@ -7,6 +7,13 @@ import re
 import glob
 import pytz
 
+# Parameter: a TEXT string
+# Returns: the escaped string, according to RFC 5545 §3.3.11
+def escape(string):
+  string = re.sub(r"\\n", "\n", string)
+  string = re.sub(r"\\(.)", r"\1", string)
+  return string
+
 # Parameter: list of options in format key=value
 # Returns: dictionary of given options in format
 #         {key : value, ...}
@@ -72,8 +79,7 @@ def getEvents(baseDay, interval):
       # Check if this line is part of a long content lines (RFC §3.1)
       # i.e. begins with SPACE or HTAB.
       if item[0] == ' ' or item[0] == '\t':
-        # Escape text as in §3.3.11
-        item = re.sub(r"\\(.)",r"\1", item)
+        item = escape(item)
         try:
           event_dict[propertyName] += item.lstrip()
         except KeyError:
@@ -125,9 +131,9 @@ def getEvents(baseDay, interval):
               event_dict['DATETIME'] = event_parsed_dt.astimezone(local_tz)
               event_dict['ALLDAY'] = False
           elif k[0] == 'LOCATION':
-              event_dict['LOCATION'] = re.sub(r"\\(.)",r"\1", k[1])
+              event_dict['LOCATION'] = escape(k[1])
           elif k[0] == 'DESCRIPTION':
-              event_dict['DESCRIPTION'] = re.sub(r"\\(.)",r"\1", k[1])
+              event_dict['DESCRIPTION'] = escape(k[1])
           elif k[0] == 'RRULE':
             options = parseOptions(k[1:])
             repetition['single'] = False
