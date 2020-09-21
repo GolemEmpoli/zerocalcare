@@ -108,7 +108,7 @@ def getEvents(baseDay, interval):
         if blockParsing == "VEVENT":
           if k[0] == 'SUMMARY':
             # save event name
-            event_dict['NAME'] = escape(k[1])
+            event_dict['SUMMARY'] = escape(k[1])
           elif k[0] == 'DTSTART':
             options = parseOptions(k[1:])
 
@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
   for event in events:
       try:
-        print ("Event Name: %s" % event['NAME'])
+        print ("Event Name: %s" % event['SUMMARY'])
         print ("Event Date: %s" % event['DATETIME'].date())
         if event['ALLDAY']:
             print("All Day")
