@@ -29,10 +29,14 @@ def parseOptions(arr):
 
 # Parameter: datetime object, interval string in {'today', 'week', '4weeks'}
 # Returns: dictionary of events starting from baseDay, inside interval.
-#         {'NAME'       : occurrence name,
+#            Keys have direct correspondance with iCalendar property names.
+#            Some custom ones have been added (i.e. ALLDAY).
+#         {'SUMMARY'    : occurrence name,
 #          'DATETIME'   : date in format YYYY-MM-DD hh:mm:ss+tz_offset,
-#          'ALLDAY'     : boolean, true if event lasts all day. Hour in DATETIME has no meaning,
+#          'DESCRIPTION': a longer occurence text,
 #          'LOCATION'   : self explanatory,
+#          
+#          'ALLDAY'     : boolean, true if event lasts all day. Hour in DATETIME has no meaning,
 #          'OCCURRENCE' : [optional] number of occurrence in repeated events}
 def getEvents(baseDay, interval):
   if   interval == 'today':
