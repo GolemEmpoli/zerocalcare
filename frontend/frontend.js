@@ -90,7 +90,20 @@ function zerocalcareDisplay() {
                 descriptionText.appendChild(document.createTextNode(decodeURI(json_obj[i]['DESCRIPTION'])));
                 descriptionElement.appendChild(document.createTextNode('📝  '));
                 descriptionElement.appendChild(descriptionText);
+                descriptionElement.style.display = "none";
                 contentEventElement.appendChild(descriptionElement);
+
+                // Display a clickable "..." button.
+                var moreElement = document.createElement('div');
+                moreElement.appendChild(document.createTextNode('ℹ️ Più informazioni...'));
+                moreElement.onclick = () => {
+                    if (descriptionElement.style.display == "none") {
+                        descriptionElement.style.display = "block";
+                    } else {
+                        descriptionElement.style.display = "none";
+                    }
+                };
+                contentEventElement.appendChild(moreElement);
             }
                     
             zerocalcareOutput.appendChild(eventElement);
