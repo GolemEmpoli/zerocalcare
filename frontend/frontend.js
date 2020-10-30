@@ -2,11 +2,11 @@
 
 function zerocalcareDisplay(xhr) {
     let zerocalcareOutput = document.getElementById('zerocalcareOutput');
-    
+
     if (xhr.readyState == 4 && xhr.status == 200) {
 
         let json_obj = JSON.parse(xhr.responseText);
-        let atLeastOne = false; 
+        let atLeastOne = false;
 
         for (let i in json_obj) {
             // Do not display private events
@@ -76,7 +76,16 @@ function zerocalcareDisplay(xhr) {
             let locationElement = document.createElement('div');
             let locationText = document.createElement('span');
             if (json_obj[i]['LOCATION'] !== undefined && json_obj[i]['LOCATION'] != '') {
-                locationText.appendChild(document.createTextNode(decodeURI(json_obj[i]['LOCATION'])));
+                let text = decodeURI(json_obj[i]['LOCATION']);
+                let textNode = document.createTextNode(text);
+                if (text.match("^(http|https):\\/\\/.*$")) {
+                    let anchorElement = document.createElement('a');
+                    anchorElement.href = text;
+                    anchorElement.appendChild(textNode);
+                    locationText.appendChild(anchorElement);
+                } else {
+                    locationText.appendChild(textNode);
+                }
             }
             else {
                 locationText.appendChild(document.createTextNode('Officina Informatica'));
@@ -97,7 +106,7 @@ function zerocalcareDisplay(xhr) {
                 let moreElement = document.createElement('div');
                 let moreShowText = document.createElement('a');
                 let moreHideText = document.createElement('a');
-                
+
                 moreShowText.appendChild(document.createTextNode('⬇️ Più informazioni...'));
                 moreElement.appendChild(moreShowText);
                 moreHideText.appendChild(document.createTextNode('⬆️ Nascondi informazioni...'));
@@ -118,7 +127,7 @@ function zerocalcareDisplay(xhr) {
                 contentEventElement.appendChild(moreElement);
                 contentEventElement.appendChild(descriptionElement);
             }
-                    
+
             zerocalcareOutput.appendChild(eventElement);
             atLeastOne = true;
         }
