@@ -1,11 +1,12 @@
-#!/usr/bin/python3
-import mysql.connector as sql
+#!/usr/bin/env python3
+
 import datetime as dt
 import dateutil.relativedelta as rd
 import sys
 import re
 import glob
 import pytz
+import caldav
 
 # Parameter: a TEXT string
 # Returns: the escaped string, according to RFC 5545 §3.3.11
@@ -53,21 +54,22 @@ def getEvents(baseDay, interval):
   leftLimit = local_tz.localize(leftLimit)
   rightLimit = local_tz.localize(rightLimit)
 
-  c = sql.connect(unix_socket=glob.cfg['mysql']['unix_socket'], host=glob.cfg['mysql']['host'], user=glob.cfg['mysql']['user'], password=glob.cfg['mysql']['password'], db=glob.cfg['mysql']['db'])
-  mycursor = c.cursor()
-  # For repeated events
-  query = "SELECT obj.calendardata FROM oc_calendarobjects AS obj INNER JOIN oc_calendars AS cal ON obj.calendarid = cal.id WHERE cal.displayname='%s' AND obj.firstoccurence < %s AND obj.lastoccurence > %s" % (glob.cfg['caldav']['cal_name'], rightLimit.strftime('%s'), leftLimit.strftime('%s'))
-  mycursor.execute(query)
-  result = mycursor.fetchall()
-  c.close()
+  url = glob.cfg['caldav']['cal_url']
+
+  client = caldav.DAVClient(url=url)
+  calendar = caldav.Calendar(client=client, url=url)
+
+  result = calendar.date_search(
+          start=leftLimit,
+          end=rightLimit)
 
   events = []
 
-  for event in result:
+  for event in result:    
     repetition = {'single' : True, 'freq' : {'DAILY': 0, 'WEEKLY' : 0, 'MONTHLY' : 0, 'YEARLY': 0}, 'interval' : 1, 'count': 0, 'until' : None}
 
-     # selected only first column
-    event = event[0].decode('utf8')
+    # fetch ascii data
+    event = event.data
     # Current BEGIN:xxx block name
     blockParsing = None
     # Current property name (for long content line unfolding, RFC §3.1)
