@@ -108,7 +108,28 @@ def getEvents(baseDay, interval):
       # but nobody cares
       if k[0] == "BEGIN":
         blockParsing = k[1]
+        if blockParsing == "VEVENT":
+          event_dict = {}
       elif k[0] == "END":
+        if k[1] == "VEVENT":
+          # If single event push into list
+          if repetition['single'] == True:
+            events += [event_dict]
+          else:
+            event_count = 1
+            # Get first event inside interval
+            while event_dict['DATETIME'] < leftLimit:
+              event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
+              event_count += 1
+
+            # Push all events inside interval
+            while event_dict['DATETIME'] < rightLimit and (repetition['until'] is None or repetition['until'] >= event_dict['DATETIME'].date()):
+              event_dict['OCCURRENCE'] = event_count
+              events += [event_dict.copy()]
+              if repetition['count'] == event_count:
+                break
+              event_count+=1
+              event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
         blockParsing = None
       else:
         if blockParsing == "VEVENT":
@@ -165,25 +186,6 @@ def getEvents(baseDay, interval):
             event_dict['CLASS'] = k[1]
           elif k[0] == 'STATUS':
             event_dict['STATUS'] = k[1]
-    # If single event push into list
-    if repetition['single'] == True:
-      events += [event_dict]
-    else:
-      event_count = 1
-      # Get first event inside interval
-      while event_dict['DATETIME'] < leftLimit:
-        event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
-        event_count += 1
-
-      # Push all events inside interval
-      while event_dict['DATETIME'] < rightLimit and (repetition['until'] is None or repetition['until'] >= event_dict['DATETIME'].date()):
-        event_dict['OCCURRENCE'] = event_count
-        events += [event_dict.copy()]
-        if repetition['count'] == event_count:
-          break
-        event_count+=1
-        event_dict['DATETIME'] += rd.relativedelta(days=repetition['freq']['DAILY'],weeks=repetition['freq']['WEEKLY'],months=repetition['freq']['MONTHLY'],years=repetition['freq']['YEARLY'])*repetition['interval']
-
 
   # Thanks stackoverflow
   # Return events sorted by date, AllDay first
