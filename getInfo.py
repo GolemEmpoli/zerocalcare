@@ -77,7 +77,7 @@ def getEvents(baseDay, interval):
 
     event_dict = {}
 
-    for item in event.split('\r\n'):
+    for item in event.split('\n'):
       # ignore empty lines
       if len(item) == 0:
         continue
