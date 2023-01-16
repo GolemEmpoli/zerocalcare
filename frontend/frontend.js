@@ -1,7 +1,7 @@
 "use strict"
 
-function zerocalcareDisplay(xhr) {
-    let zerocalcareOutput = document.getElementById('zerocalcareOutput');
+function zerocalcareDisplay(xhr, target_id) {
+    let zerocalcareOutput = document.getElementById(target_id);
 
     if (xhr.readyState == 4 && xhr.status == 200) {
 
@@ -141,12 +141,12 @@ function zerocalcareDisplay(xhr) {
     }
 }
 
-function zerocalcareTrigger(url) {
+function zerocalcareTrigger(url, target_id="zerocalcareOutput") {
     if (typeof url !== "string")
         return
 
     let xhr = new XMLHttpRequest();
-    xhr.onload = () => { zerocalcareDisplay(xhr) };
+    xhr.onload = () => { zerocalcareDisplay(xhr, target_id) };
     xhr.open('GET', url, true);
     xhr.send(null);
 }
